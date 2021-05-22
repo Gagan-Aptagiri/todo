@@ -68,10 +68,26 @@ function updateToDo(event) {
 	renderTodos(todos);
 }
 
+function deleteToDo(event) {
+	if (event.target.nodeName.toLowerCase() !== 'button') {
+		return;
+	}
+	const id = parseInt(event.target.parentNode.getAttribute('data-id'), 10);
+	const label = event.target.previousElementSibling.innerText;
+	if (window.confirm(`Delete ${label}?`)) {
+		todos = todos.filter((todo, index) => index !== id);
+		renderTodos(todos);
+	}
+}
+
 //init
 function init() {
+	//Add todo
 	form.addEventListener('submit', addToDo);
+	//Update todo
 	list.addEventListener('change', updateToDo);
+	//Delete todo
+	list.addEventListener('click', deleteToDo);
 }
 
 init();

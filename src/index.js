@@ -78,6 +78,45 @@ function updateToDo(event) {
 	setLocalStorage(todos);
 }
 
+function editToDo(event) {
+	if (event.target.nodeName.toLowerCase() !== 'span') {
+		return;
+	}
+	const id = parseInt(event.target.parentNode.getAttribute('data-id'), 10);
+	const todoLabel = todos[id].label;
+
+	const input = document.createElement('input');
+	input.type = 'text';
+	input.value = todoLabel;
+
+	function handleEdit() {
+		event.stopPropagation();
+		const label = this.value;
+		if (label !== todoLabel) {
+			todos = todos.map((todo, index) => {
+				if (index === id) {
+					return {
+						...todo,
+						label,
+					};
+				}
+				return todo;
+			});
+			renderTodos(todos);
+			setLocalStorage(todos);
+		}
+		//clean up
+		event.target.style.display = '';
+		this.removeEventListener('change', handleEdit);
+		this.remove();
+	}
+
+	event.target.style.display = 'none';
+	event.target.parentNode.append(input);
+	input.addEventListener('change', handleEdit);
+	input.focus();
+}
+
 function deleteToDo(event) {
 	if (event.target.nodeName.toLowerCase() !== 'button') {
 		return;
@@ -110,6 +149,8 @@ function init() {
 	form.addEventListener('submit', addToDo);
 	//Update todo
 	list.addEventListener('change', updateToDo);
+	//Edit todo
+	list.addEventListener('dblclick', editToDo);
 	//Delete todo
 	list.addEventListener('click', deleteToDo);
 	//Clear complete todos

@@ -24,6 +24,7 @@ let todos = [];
 //selectors
 const root = document.querySelector('.todos');
 const list = root.querySelector('.todos-list');
+const count = root.querySelector('.todos-count');
 const form = document.forms.todos;
 const input = form.elements.todo;
 
@@ -32,14 +33,15 @@ function renderTodos(todos) {
 	let toDoString = '';
 	todos.forEach((todo, index) => {
 		toDoString += `
-      <li data-id="${index}">
-        <input type="checkbox">
+      <li data-id="${index}"${todo.complete ? ' class="todos-complete"' : ''}>
+        <input type="checkbox"${todo.complete ? ' checked' : ''}>
         <span> ${todo.label} </span>
         <button type="button"></button>
       </li>
     `;
 	});
 	list.innerHTML = toDoString;
+	count.innerText = todos.filter((todo) => !todo.complete).length;
 }
 
 function addToDo(event) {
@@ -51,9 +53,25 @@ function addToDo(event) {
 	input.value = '';
 }
 
+function updateToDo(event) {
+	const id = parseInt(event.target.parentNode.getAttribute('data-id'), 10);
+	const complete = event.target.checked;
+	todos = todos.map((todo, index) => {
+		if (index === id) {
+			return {
+				...todo,
+				complete,
+			};
+		}
+		return todo;
+	});
+	renderTodos(todos);
+}
+
 //init
 function init() {
 	form.addEventListener('submit', addToDo);
+	list.addEventListener('change', updateToDo);
 }
 
 init();

@@ -17,3 +17,43 @@ app.innerHTML = `
     <ul class="todos-list"></ul>
   </div>
 `;
+
+//state
+let todos = [];
+
+//selectors
+const root = document.querySelector('.todos');
+const list = root.querySelector('.todos-list');
+const form = document.forms.todos;
+const input = form.elements.todo;
+
+//functions
+function renderTodos(todos) {
+	let toDoString = '';
+	todos.forEach((todo, index) => {
+		toDoString += `
+      <li data-id="${index}">
+        <input type="checkbox">
+        <span> ${todo.label} </span>
+        <button type="button"></button>
+      </li>
+    `;
+	});
+	list.innerHTML = toDoString;
+}
+
+function addToDo(event) {
+	event.preventDefault();
+	const label = input.value.trim();
+	const complete = false;
+	todos = [...todos, { label, complete }];
+	renderTodos(todos);
+	input.value = '';
+}
+
+//init
+function init() {
+	form.addEventListener('submit', addToDo);
+}
+
+init();

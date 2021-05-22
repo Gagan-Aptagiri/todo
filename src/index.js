@@ -19,7 +19,7 @@ app.innerHTML = `
 `;
 
 //state
-let todos = [];
+let todos = JSON.parse(localStorage.getItem('todos')) || [];
 
 //selectors
 const root = document.querySelector('.todos');
@@ -30,6 +30,10 @@ const form = document.forms.todos;
 const input = form.elements.todo;
 
 //functions
+function setLocalStorage(todos) {
+	localStorage.setItem('todos', JSON.stringify(todos));
+}
+
 function renderTodos(todos) {
 	let toDoString = '';
 	todos.forEach((todo, index) => {
@@ -54,6 +58,7 @@ function addToDo(event) {
 	const complete = false;
 	todos = [...todos, { label, complete }];
 	renderTodos(todos);
+	setLocalStorage(todos);
 	input.value = '';
 }
 
@@ -70,6 +75,7 @@ function updateToDo(event) {
 		return todo;
 	});
 	renderTodos(todos);
+	setLocalStorage(todos);
 }
 
 function deleteToDo(event) {
@@ -81,6 +87,7 @@ function deleteToDo(event) {
 	if (window.confirm(`Delete ${label}?`)) {
 		todos = todos.filter((todo, index) => index !== id);
 		renderTodos(todos);
+		setLocalStorage(todos);
 	}
 }
 
@@ -92,11 +99,13 @@ function clearCompleteTodos() {
 	if (window.confirm(`Delete ${count} todos?`)) {
 		todos = todos.filter((todo) => !todo.complete);
 		renderTodos(todos);
+		setLocalStorage(todos);
 	}
 }
 
 //init
 function init() {
+	renderTodos(todos);
 	//Add todo
 	form.addEventListener('submit', addToDo);
 	//Update todo
